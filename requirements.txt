@@ -2,3 +2,5 @@ openai
 openai-agents
 gradio
 python-dotenv
+fastapi
+uvicorn[standard]

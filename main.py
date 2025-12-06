@@ -1,33 +1,22 @@
-import gradio as gr
-from ManagerAgent import GymManager
-from dotenv import load_dotenv
+from fastapi import FastAPI
+import os
 
-load_dotenv(override=True)
+app = FastAPI()
 
-manager = GymManager()
+@app.get("/")
+def home():
+    return {"message": "AI Gym Coach API running!"}
 
-async def generate_workout(user_input: str):
-    async for step in manager.run(user_input):
-        yield str(step)  # yield each step for live updates
+@app.get("/workout")
+async def generate_workout(query: str):
+    # Call your GymManager here
+    return {"workout": f"Generated plan for: {query}"}
 
-
-with gr.Blocks() as demo:
-    gr.Markdown("## 💪 AI Gym Coach")
-    gr.Markdown("Enter your fitness goals below. Your personalized plan will appear underneath.")
-
-    user_box = gr.Textbox(
-        label="Your Fitness Goals",
-        placeholder="Example: Build muscle, 4x a week, gym access",
-        lines=2
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8000)),
+        reload=False
     )
-    generate_btn = gr.Button("Generate Plan")
-
-    # Use Markdown for output so formatting shows
-    result_box = gr.Markdown()
-
-    # Click OR press Enter
-    generate_btn.click(generate_workout, inputs=user_box, outputs=result_box)
-    user_box.submit(generate_workout, inputs=user_box, outputs=result_box)
-
-
-demo.launch(inbrowser=True)
