@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 import os
 from fastapi.middleware.cors import CORSMiddleware
+from test import testagent
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -23,7 +25,16 @@ def home():
 @app.get("/workout")
 async def generate_workout(query: str):
     # Call your GymManager here
+    
     return {"workout": f"Generated plan for: {query}"}
+
+class Input(BaseModel):
+    text: str
+
+@app.post('/agent')
+async def test(data: Input):
+    result = await testagent(data.text)
+    return {"txt": result}
 
 if __name__ == "__main__":
     import uvicorn
@@ -33,3 +44,13 @@ if __name__ == "__main__":
         port=int(os.environ.get("PORT", 8000)),
         reload=False
     )
+
+
+
+# @app.post("/full-page")
+# async def full_page_endpoint(req: FullPageRequest):
+#     if req.mode != "aeo_full":
+#         return {"error": "Invalid mode"}
+    
+#     analysis = await aeo_full_page_analyze(req.text, req.html)
+#     return analysis
