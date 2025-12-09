@@ -32,17 +32,20 @@ async def generate_workout(query: str):
     return {"workout": f"Generated plan for: {query}"}
 
 class Input(BaseModel):
-    days: str
     goal: str
+    days: str
     train: str
 
-@app.post('/agent')
-async def test(data: Input):
+@app.post("/agent")
+async def run_agent(data: Input):
     try:
-        result = await testagent(data.days, data.goal, data.train)
-        return {"txt": result}
+        # Call your AI function
+        output = await testagent(data.days, data.goal, data.train)
+        return {"txt": output}
     except Exception as e:
+        # Return the error so React can show it
         return {"error": str(e)}
+
 
 
 if __name__ == "__main__":
