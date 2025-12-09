@@ -29,12 +29,15 @@ async def generate_workout(query: str):
     return {"workout": f"Generated plan for: {query}"}
 
 class Input(BaseModel):
-    text: str
+    days: str
+    goal: str
+    train: str
 
 @app.post('/agent')
 async def test(data: Input):
-    result = await testagent(data.text)
+    result = await testagent(data.days, data.goal, data.train)
     return {"txt": result}
+
 
 if __name__ == "__main__":
     import uvicorn
