@@ -3,6 +3,9 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 from test import testagent
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -35,8 +38,11 @@ class Input(BaseModel):
 
 @app.post('/agent')
 async def test(data: Input):
-    result = await testagent(data.days, data.goal, data.train)
-    return {"txt": result}
+    try:
+        result = await testagent(data.days, data.goal, data.train)
+        return {"txt": result}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 if __name__ == "__main__":
